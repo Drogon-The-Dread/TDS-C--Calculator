@@ -1,3 +1,5 @@
+using Calculator;
+
 namespace CalculatorXUnitTests;
 
 public class CalculatorClassTests
@@ -8,7 +10,7 @@ public class CalculatorClassTests
     [InlineData("10 + 20", 30)]
     public void Evaluate_Addition_ReturnsCorrectResult(string expression, double expected)
     {
-        var calculator = new Calculator();
+        var calculator = new CalculatorClass();
 
         double result = calculator.Evaluate(expression);
 

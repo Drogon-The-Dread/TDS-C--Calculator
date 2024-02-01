@@ -1,0 +1,37 @@
+name: .NET CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # Necessary for history and branch manipulation
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.101' 
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Format code
+      run: dotnet format --check
+
+    - name: Run tests
+      run: dotnet test --no-restore
+
+    - name: Push to main if tests pass
+      if: success()
+      run: |
+        git config --global user.name '${{ github.actor }}'
+        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+        git checkout main
+        git merge ${{ github.ref }} -m "Merging successful test changes from ${{ github.ref }}"
+        git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
